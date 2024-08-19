@@ -14,14 +14,20 @@
 }
 
 .App-header {
-  background-color: #282c34;
+/* sunrise and sun set */
+  background-image: linear-gradient(to right, #ff7e5f, #ff8962, #ff9366, #fe9d6b, #fea771, #ffae71, #ffb471, #ffbb71, #ffc169, #ffc762, #ffcd5a, #ffd452);
+
+  /* clear sky gradient */
+  /* background-image: linear-gradient(to right, #00c6ff, #00b9ff, #00abff, #009cff, #008bff, #0087ff, #0083ff, #007fff, #0088ff, #0091ff, #009aff, #00a2ff); */
+
+  /* stromy weather */
+  /* background-image: linear-gradient(to right, #373b44, #3c4962, #3f5782, #4065a3, #4173c5, #3c81d7, #338fe9, #239dfb, #20acfd, #35bbfd, #50c8fc, #6dd5fa); */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
@@ -35,4 +41,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.header {
+  position: relative;
 }
