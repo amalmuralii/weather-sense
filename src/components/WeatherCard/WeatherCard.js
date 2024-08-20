@@ -4,6 +4,7 @@ import pressureIcon from "../../assets/icons/pressure.png";
 import windIcon from "../../assets/icons/wind.png";
 import dewpIcon from "../../assets/icons/dew.png";
 import precipitationIcon from "../../assets/icons/precipitation.png";
+import gustIcon from "../../assets/icons/gust.png"
 
 const WeatherCard = ({ location, error, weatherData }) => {
   const icon = weatherData?.current?.condition?.icon;
@@ -13,18 +14,20 @@ const WeatherCard = ({ location, error, weatherData }) => {
 
   const cloudy = false;
 
-  const getTitle = (key) => {
+  const getData = (key) => {
     switch (key) {
       case "humidity":
-        return "Humidity";
+        return { title: "Humidity", value: `${currentWeather[key]}%` };
       case "pressure_mb":
-        return "Pressure";
+        return { title: "Pressure", value: `${currentWeather[key]}mb` };
       case "wind_kph":
-        return "Wind";
+        return { title: "Wind", value: `${currentWeather[key]}kph` };
       case "dewpoint_c":
-        return "Dew Point";
+        return { title: "Dew Point", value: `${currentWeather[key]}°` };
       case "precip_in":
-        return "Precipitation";
+        return { title: "Precipitation", value: `${currentWeather[key]}in` };
+      case "gust_kph":
+        return { title: "Gust", value: `${currentWeather[key]}kph` };
       default:
         return null;
     }
@@ -42,6 +45,8 @@ const WeatherCard = ({ location, error, weatherData }) => {
         return dewpIcon;
       case "precip_in":
         return precipitationIcon;
+      case "gust_kph":
+        return gustIcon;
       default:
         return null;
     }
@@ -49,13 +54,13 @@ const WeatherCard = ({ location, error, weatherData }) => {
 
   const icons = currentWeather
     ? Object.keys(currentWeather)
-        .map((key) => ({
-          key,
-          value: currentWeather[key],
-          icon: getIconsForKey(key),
-          title: getTitle(key),
-        }))
-        .filter((item) => item.icon)
+      .map((key) => ({
+        key,
+        value: currentWeather[key],
+        icon: getIconsForKey(key),
+        data: getData(key),
+      }))
+      .filter((item) => item.icon)
     : [];
 
   return (
@@ -75,12 +80,13 @@ const WeatherCard = ({ location, error, weatherData }) => {
             </div>
           </div>
           <div className="weatherInfo">
-            {icons.map(({ key, value, icon, title }) => (
+            {icons.map(({ key, value, icon, data }) => (
               <div key={key} className="icon-item">
-                <img src={icon} alt={title} className="icon" />
+                <img src={icon} alt={data.title} className="icon" />
                 <div className="label">
-                  {title}: {value}
+                  {data.title}
                 </div>
+                <div className="value">{data.value}</div>
               </div>
             ))}
           </div>

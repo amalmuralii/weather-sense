@@ -5,11 +5,7 @@ import WeatherCard from "./components/WeatherCard/WeatherCard";
 import WeatherHistory from "./components/WeatherHistory/WeatherHistory";
 import { useEffect, useState } from "react";
 import useGeolocation from "./hooks/GeoLocationHook";
-import {
-  fetchCurrentWeather,
-  fetchHistoricalWeather,
-  fetchWeatherForecast,
-} from "./services/fetchWeatherData";
+import { fetchCurrentWeather } from "./services/fetchWeatherData";
 function App() {
   const OPENCAGE_API_KEY = "dd9a267e40f345d5b8b03e383ab9e443";
 
@@ -22,17 +18,20 @@ function App() {
   ];
 
   const { position } = useGeolocation();
-  const [address, setAddress] = useState(null);
   const [error, setError] = useState(null);
   const [location, setLocation] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [backgroundClass, setBackgroundClass] = useState("defaultBg");
 
+  const getbackgroundClass = (temp) => {
+    const range = tempRangeClasses.find((range) => temp <= range.maxTemp);
+    return range ? range.backgroundClass : "";
+  };
+
   useEffect(() => {
     if (position) {
       reverseGeocode(position.latitude, position.longitude)
         .then((address) => {
-          setAddress(address);
           const city = address.components.city;
           setLocation(city);
           console.log("Loc", city);
@@ -42,7 +41,7 @@ function App() {
               console.log(weatherData);
               const temp = parseInt(weatherData?.data?.current?.temp_c);
               console.log(temp);
-              const bgClass = getbackgroundClass(0);
+              const bgClass = getbackgroundClass(40);
               setBackgroundClass(bgClass);
               console.log(weatherData);
             })
@@ -65,11 +64,6 @@ function App() {
     } else {
       throw new Error("Unable to retrieve location");
     }
-  };
-
-  const getbackgroundClass = (temp) => {
-    const range = tempRangeClasses.find((range) => temp <= range.maxTemp);
-    return range ? range.backgroundClass : "";
   };
 
   return (
