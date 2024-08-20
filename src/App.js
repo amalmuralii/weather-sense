@@ -5,18 +5,50 @@ import WeatherCard from "./components/WeatherCard/WeatherCard";
 import WeatherHistory from "./components/WeatherHistory/WeatherHistory";
 import { useEffect, useState } from "react";
 import useGeolocation from "./hooks/GeoLocationHook";
+import {
+  fetchCurrentWeather,
+  fetchHistoricalWeather,
+  fetchWeatherForecast,
+} from "./services/fetchWeatherData";
 function App() {
-  const OPENCAGE_API_KEY = "dd9a267e40f345d5b8b03e383ab9e443"; // Replace with your API key
-  const { position, err } = useGeolocation();
+  const OPENCAGE_API_KEY = "dd9a267e40f345d5b8b03e383ab9e443";
+
+  const tempRangeClasses = [
+    { maxTemp: 0, backgroundClass: "freezing" },
+    { maxTemp: 10, backgroundClass: "cold" },
+    { maxTemp: 20, backgroundClass: "warm" },
+    { maxTemp: 30, backgroundClass: "hot" },
+    { maxTemp: 40, backgroundClass: "veryHot" },
+  ];
+
+  const { position } = useGeolocation();
   const [address, setAddress] = useState(null);
   const [error, setError] = useState(null);
+  const [location, setLocation] = useState("");
+  const [weatherData, setWeatherData] = useState(null);
+  const [backgroundClass, setBackgroundClass] = useState("defaultBg");
 
   useEffect(() => {
     if (position) {
       reverseGeocode(position.latitude, position.longitude)
         .then((address) => {
           setAddress(address);
-          console.log(address);
+          const city = address.components.city;
+          setLocation(city);
+          console.log("Loc", city);
+          fetchCurrentWeather(city)
+            .then((weatherData) => {
+              setWeatherData(weatherData.data);
+              console.log(weatherData);
+              const temp = parseInt(weatherData?.data?.current?.temp_c);
+              console.log(temp);
+              const bgClass = getbackgroundClass(0);
+              setBackgroundClass(bgClass);
+              console.log(weatherData);
+            })
+            .catch((error) => {
+              setError(error);
+            });
         })
         .catch((error) => {
           setError(error);
@@ -35,6 +67,11 @@ function App() {
     }
   };
 
+  const getbackgroundClass = (temp) => {
+    const range = tempRangeClasses.find((range) => temp <= range.maxTemp);
+    return range ? range.backgroundClass : "";
+  };
+
   return (
     <>
       <header className="header">
@@ -42,8 +79,12 @@ function App() {
         <SearchBar />
       </header>
 
-      <div className="App-header">
-        <WeatherCard />
+      <div className={`App-header ${backgroundClass}`}>
+        <WeatherCard
+          location={location}
+          error={error}
+          weatherData={weatherData}
+        />
         <WeatherHistory />
       </div>
     </>

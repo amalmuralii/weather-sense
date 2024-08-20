@@ -2,6 +2,33 @@
   text-align: center;
 }
 
+.defaultBg {
+  --background-image: linear-gradient(to right top, #000000, #0c0b0b, #141314, #1b191a, #211f21, #272427, #2d2a2d, #332f34, #39353c, #3f3c44, #45434c, #4b4a54);
+}
+
+.freezing {
+  --background-image: linear-gradient(to left bottom, #000428, #02163a, #05214d, #072e60, #073b75, #094887, #09569a, #0564ad, #0775c1, #0886d6, #0598ea, #00aaff);
+}
+
+.cold {
+  --background-image: linear-gradient(to left bottom, #00416a, #004971, #005078, #00587f, #006085, #00678d, #006e95, #00759d, #007ea9, #0087b4, #0090c0, #0099cc);
+}
+
+.cool {
+  --background-image: linear-gradient(to left bottom, #1e90ff, #2a9dff, #3da9ff, #53b5ff, #69c0fd, #73c7fa, #7fcef8, #8dd4f5, #94d8f1, #9cdbed, #a6dee9, #b0e0e6);
+}
+
+.warm {
+  --background-image: linear-gradient(to left bottom, #f39c12, #f3a40f, #f3ab0c, #f3b30a, #f2ba0b, #f8bc34, #fcbe4c, #ffc161, #ffc48a, #ffccaf, #ffd8d0, #f7e7e7);
+}
+
+.hot {
+  --background-image: linear-gradient(to left bottom, #e74c3c, #ec5b35, #f06a2e, #f37926, #f4881d, #f69317, #f79d12, #f7a80c, #fab107, #fcba03, #fec301, #ffcc00);
+}
+
+.veryHot {
+  --background-image: linear-gradient(to left bottom, #d32f2f, #dc362e, #e43e2c, #ed452a, #f54d27, #f95723, #fc601f, #ff691a, #ff7513, #ff810c, #ff8d04, #ff9800);
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -14,14 +41,7 @@
 }
 
 .App-header {
-/* sunrise and sun set */
-  background-image: linear-gradient(to right, #ff7e5f, #ff8962, #ff9366, #fe9d6b, #fea771, #ffae71, #ffb471, #ffbb71, #ffc169, #ffc762, #ffcd5a, #ffd452);
-
-  /* clear sky gradient */
-  /* background-image: linear-gradient(to right, #00c6ff, #00b9ff, #00abff, #009cff, #008bff, #0087ff, #0083ff, #007fff, #0088ff, #0091ff, #009aff, #00a2ff); */
-
-  /* stromy weather */
-  /* background-image: linear-gradient(to right, #373b44, #3c4962, #3f5782, #4065a3, #4173c5, #3c81d7, #338fe9, #239dfb, #20acfd, #35bbfd, #50c8fc, #6dd5fa); */
+  background-image: var(--background-image);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -38,6 +58,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
