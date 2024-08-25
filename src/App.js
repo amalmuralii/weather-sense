@@ -5,66 +5,45 @@ import WeatherCard from "./components/WeatherCard/WeatherCard";
 import WeatherHistory from "./components/WeatherHistory/WeatherHistory";
 import { useEffect, useState } from "react";
 import useGeolocation from "./hooks/GeoLocationHook";
-import { fetchCurrentWeather } from "./services/fetchWeatherData";
+import {
+  fetchCurrentWeatherData,
+  fetchLocation,
+  selectWeatherData,
+  getWeatherStatus,
+  selectLocation,
+} from "./features/weather/weatherSlice";
+import { useDispatch, useSelector } from "react-redux";
+import getbackgroundClass from "./services/getBackgroundClass";
+
 function App() {
-  const OPENCAGE_API_KEY = "dd9a267e40f345d5b8b03e383ab9e443";
-
-  const tempRangeClasses = [
-    { maxTemp: 0, backgroundClass: "freezing" },
-    { maxTemp: 10, backgroundClass: "cold" },
-    { maxTemp: 20, backgroundClass: "warm" },
-    { maxTemp: 30, backgroundClass: "hot" },
-    { maxTemp: 40, backgroundClass: "veryHot" },
-  ];
-
+  const dispatch = useDispatch();
+  const weatherData = useSelector(selectWeatherData);
+  const weatherAPIStatus = useSelector(getWeatherStatus);
+  const location = useSelector(selectLocation);
   const { position } = useGeolocation();
-  const [error, setError] = useState(null);
-  const [location, setLocation] = useState("");
-  const [weatherData, setWeatherData] = useState(null);
   const [backgroundClass, setBackgroundClass] = useState("defaultBg");
 
-  const getbackgroundClass = (temp) => {
-    const range = tempRangeClasses.find((range) => temp <= range.maxTemp);
-    return range ? range.backgroundClass : "";
-  };
-
+  // Fetch the user's location and weather data
   useEffect(() => {
     if (position) {
-      reverseGeocode(position.latitude, position.longitude)
-        .then((address) => {
-          const city = address.components.city;
-          setLocation(city);
-          console.log("Loc", city);
-          fetchCurrentWeather(city)
-            .then((weatherData) => {
-              setWeatherData(weatherData.data);
-              console.log(weatherData);
-              const temp = parseInt(weatherData?.data?.current?.temp_c);
-              console.log(temp);
-              const bgClass = getbackgroundClass(40);
-              setBackgroundClass(bgClass);
-              console.log(weatherData);
-            })
-            .catch((error) => {
-              setError(error);
-            });
-        })
-        .catch((error) => {
-          setError(error);
-        });
+      dispatch(fetchLocation({ latitude: position.latitude, longitude: position.longitude }));
     }
-  }, [position]);
-  const reverseGeocode = async (lat, lng) => {
-    const response = await fetch(
-      `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${OPENCAGE_API_KEY}`
-    );
-    const data = await response.json();
-    if (data.results.length > 0) {
-      return data.results[0];
-    } else {
-      throw new Error("Unable to retrieve location");
+  }, [position, dispatch]);
+
+  useEffect(() => {
+    if (location) {
+      dispatch(fetchCurrentWeatherData(location));
     }
-  };
+  }, [location, dispatch]);
+
+  // Update the background class based on the weather data
+  useEffect(() => {
+    if (weatherAPIStatus === "succeeded" && weatherData.current) {
+      const temp = parseInt(weatherData.current.temp_c, 10);
+      const bgClass = getbackgroundClass(temp);
+      setBackgroundClass(bgClass);
+    }
+  }, [weatherAPIStatus, weatherData]);
 
   return (
     <>
@@ -72,15 +51,10 @@ function App() {
         <AppLogo />
         <SearchBar />
       </header>
-
-      <div className={`App-header ${backgroundClass}`}>
-        <WeatherCard
-          location={location}
-          error={error}
-          weatherData={weatherData}
-        />
+      <main className={`App-header ${backgroundClass}`}>
+        <WeatherCard />
         <WeatherHistory />
-      </div>
+      </main>
     </>
   );
 }

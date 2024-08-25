@@ -1,18 +1,37 @@
 import "./WeatherCard.css";
-import humidityIcon from "../../assets/icons/humidity.png";
-import pressureIcon from "../../assets/icons/pressure.png";
-import windIcon from "../../assets/icons/wind.png";
-import dewpIcon from "../../assets/icons/dew.png";
-import precipitationIcon from "../../assets/icons/precipitation.png";
-import gustIcon from "../../assets/icons/gust.png"
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import {
+  getWeatherError,
+  getWeatherStatus,
+  fetchCurrentWeatherData,
+  selectWeatherData,
+  selectLocation
+} from "../../features/weather/weatherSlice";
 
-const WeatherCard = ({ location, error, weatherData }) => {
+import getIconsByKey from "../../services/getIcon";
+
+
+const WeatherCard = () => {
+
+  const dispatch = useDispatch();
+  const weatherAPIStatus = useSelector(getWeatherStatus);
+  const weatherAPIError = useSelector(getWeatherError);
+  const weatherData = useSelector(selectWeatherData);
+  const location = useSelector(selectLocation);
   const icon = weatherData?.current?.condition?.icon;
   const temp = weatherData?.current?.temp_c;
   const cuurentCondition = weatherData?.current?.condition?.text;
   const currentWeather = weatherData?.current;
 
   const cloudy = false;
+
+  useEffect(() => {
+    if (location) {
+      dispatch(fetchCurrentWeatherData(location));
+    }
+  }, [location, dispatch])
+
 
   const getData = (key) => {
     switch (key) {
@@ -33,31 +52,12 @@ const WeatherCard = ({ location, error, weatherData }) => {
     }
   };
 
-  const getIconsForKey = (key) => {
-    switch (key) {
-      case "humidity":
-        return humidityIcon;
-      case "pressure_mb":
-        return pressureIcon;
-      case "wind_kph":
-        return windIcon;
-      case "dewpoint_c":
-        return dewpIcon;
-      case "precip_in":
-        return precipitationIcon;
-      case "gust_kph":
-        return gustIcon;
-      default:
-        return null;
-    }
-  };
-
   const icons = currentWeather
     ? Object.keys(currentWeather)
       .map((key) => ({
         key,
         value: currentWeather[key],
-        icon: getIconsForKey(key),
+        icon: getIconsByKey(key),
         data: getData(key),
       }))
       .filter((item) => item.icon)
@@ -65,7 +65,7 @@ const WeatherCard = ({ location, error, weatherData }) => {
 
   return (
     <div className={`weatherCard ${cloudy ? "cloudy" : "sunny"}`}>
-      {weatherData ? (
+      {weatherData && weatherAPIStatus === "succeeded" && (
         <>
           <div className="weatherHeader">
             <div className="weatherLocation">
@@ -91,9 +91,11 @@ const WeatherCard = ({ location, error, weatherData }) => {
             ))}
           </div>
         </>
-      ) : (
-        <span className="noData">Fetching....</span>
       )}
+      {weatherAPIError && weatherAPIStatus === "failed" &&
+        (
+          <span className="noData">Fetching....</span>
+        )}
     </div>
   );
 };
