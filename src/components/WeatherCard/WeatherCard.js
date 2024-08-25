@@ -32,6 +32,8 @@ const WeatherCard = () => {
     }
   }, [location, dispatch])
 
+  console.log('weatherAPIStatus', weatherAPIStatus);
+
 
   const getData = (key) => {
     switch (key) {

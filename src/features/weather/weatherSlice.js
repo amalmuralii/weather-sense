@@ -10,7 +10,9 @@ const initialState = {
     weatherData: {},
     status: "idle",
     error: null,
-    location: "Chennai"
+    location: "",
+    locationAPIError: null,
+    weatherAPIError: null
 };
 
 // Thunk to fetch current weather data
@@ -29,21 +31,19 @@ export const fetchCurrentWeatherData = createAsyncThunk(
 
 export const fetchLocation = createAsyncThunk(
     'weather/fetchLocation',
-    async (longitude, latitude, { rejectWithValue }) => {
+    async ({ latitude, longitude }, { rejectWithValue }) => {
         try {
             const response = await axios.get(`${OPENCAGE_API_URL}?q=${latitude}+${longitude}&key=${OPENCAGE_API_KEY}`);
-            const data = await response.json();
-            if (data.results.length > 0) {
-                const locationData = data.results[0];
+            if (response.data.results.length > 0) {
+                const locationData = response.data.results[0];
                 const locationName = locationData.components.city;
                 return locationName;
-            } else {
-                throw new Error("Unable to retrieve location");
+            }
+            else {
+                return rejectWithValue("No location found");
             }
         } catch (err) {
             console.error(err.message);
-            return rejectWithValue(err.message);
-
         }
 
     })
@@ -61,25 +61,27 @@ const weatherSlice = createSlice({
         builder
             .addCase(fetchCurrentWeatherData.pending, (state) => {
                 state.status = "loading";
-                state.error = null;
+                state.weatherAPIError = null;
             })
             .addCase(fetchCurrentWeatherData.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.weatherData = action.payload;
             })
             .addCase(fetchCurrentWeatherData.rejected, (state, action) => {
+                console.error("Weather API Error:", action.payload);
                 state.status = "failed";
                 state.error = action.payload || "Failed to fetch weather data";
             })
             .addCase(fetchLocation.pending, (state) => {
                 state.status = "loading";
-                state.error = null;
+                state.locationAPIError = null;
             })
             .addCase(fetchLocation.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.location = action.payload;
             })
             .addCase(fetchLocation.rejected, (state, action) => {
+                console.error("Location API Error:", action.payload);
                 state.status = "failed";
                 state.error = action.payload || "Failed to fetch weather data";
             });
@@ -89,8 +91,9 @@ const weatherSlice = createSlice({
 // Selectors
 export const selectWeatherData = (state) => state.weather.weatherData;
 export const getWeatherStatus = (state) => state.weather.status;
-export const getWeatherError = (state) => state.weather.error;
+export const getWeatherError = (state) => state.weather.weatherAPIError;
 export const selectLocation = (state) => state.weather.location;
+export const getWeatherLocationError = (state) => state.weather.locationAPIError;
 
 // Export actions (if you plan to use them)
 export const { setWeatherData } = weatherSlice.actions;
