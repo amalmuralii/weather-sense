@@ -1,14 +1,17 @@
 import "./App.css";
 import AppLogo from "./components/AppLogo/AppLogo";
 import SearchBar from "./components/SearchBar/SearchBar";
-import WeatherCard from "./components/WeatherCard/WeatherCard";
-import WeatherHistory from "./components/WeatherHistory/WeatherHistory";
+import Dashboard from "./pages/Dasboard/Dashboard";
+import Login from "./pages/LoginPage/Login";
 import { useEffect, useState } from "react";
 import useGeolocation from "./hooks/GeoLocationHook";
+import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./components/Private/PrivateRoute";
+
 import {
   fetchLocation,
   selectWeatherData,
-  getWeatherStatus
+  getWeatherStatus,
 } from "./features/weather/weatherSlice";
 import { useDispatch, useSelector } from "react-redux";
 import getbackgroundClass from "./services/getBackgroundClass";
@@ -44,8 +47,12 @@ function App() {
         <SearchBar />
       </header>
       <main className={`App-header ${backgroundClass}`}>
-        <WeatherCard />
-        <WeatherHistory />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
       </main>
     </>
   );

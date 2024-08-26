@@ -1,39 +1,42 @@
 import "./WeatherCard.css";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   getWeatherError,
   getWeatherStatus,
   fetchCurrentWeatherData,
   selectWeatherData,
-  selectLocation
+  selectLocation,
 } from "../../features/weather/weatherSlice";
 
 import getIconsByKey from "../../services/getIcon";
 
-
 const WeatherCard = () => {
-
   const dispatch = useDispatch();
   const weatherAPIStatus = useSelector(getWeatherStatus);
   const weatherAPIError = useSelector(getWeatherError);
   const weatherData = useSelector(selectWeatherData);
   const location = useSelector(selectLocation);
+  const [hoverdIconIndex, setHoveredIconIndex] = useState(null);
   const icon = weatherData?.current?.condition?.icon;
   const temp = weatherData?.current?.temp_c;
   const cuurentCondition = weatherData?.current?.condition?.text;
   const currentWeather = weatherData?.current;
 
-  const cloudy = false;
-
   useEffect(() => {
     if (location) {
       dispatch(fetchCurrentWeatherData(location));
     }
-  }, [location, dispatch])
+  }, [location]);
 
-  console.log('weatherAPIStatus', weatherAPIStatus);
+  const handleMouseEnter = (index) => {
+    console.log(index);
+    setHoveredIconIndex(index);
+  };
 
+  const handleMouseLeave = () => {
+    setHoveredIconIndex(null);
+  };
 
   const getData = (key) => {
     switch (key) {
@@ -56,17 +59,17 @@ const WeatherCard = () => {
 
   const icons = currentWeather
     ? Object.keys(currentWeather)
-      .map((key) => ({
-        key,
-        value: currentWeather[key],
-        icon: getIconsByKey(key),
-        data: getData(key),
-      }))
-      .filter((item) => item.icon)
+        .map((key) => ({
+          key,
+          value: currentWeather[key],
+          icon: getIconsByKey(key),
+          data: getData(key),
+        }))
+        .filter((item) => item.icon)
     : [];
 
   return (
-    <div className={`weatherCard ${cloudy ? "cloudy" : "sunny"}`}>
+    <div className="weatherCard">
       {weatherData && weatherAPIStatus === "succeeded" && (
         <>
           <div className="weatherHeader">
@@ -82,22 +85,26 @@ const WeatherCard = () => {
             </div>
           </div>
           <div className="weatherInfo">
-            {icons.map(({ key, value, icon, data }) => (
-              <div key={key} className="icon-item">
+            {icons.map(({ key, icon, data }, index) => (
+              <div
+                key={key}
+                className={`icon-item ${
+                  hoverdIconIndex === index ? "hovered" : ""
+                }`}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+              >
                 <img src={icon} alt={data.title} className="icon" />
-                <div className="label">
-                  {data.title}
-                </div>
+                <div className="label">{data.title}</div>
                 <div className="value">{data.value}</div>
               </div>
             ))}
           </div>
         </>
       )}
-      {weatherAPIError && weatherAPIStatus === "failed" &&
-        (
-          <span className="noData">Fetching....</span>
-        )}
+      {weatherAPIError && weatherAPIStatus === "failed" && (
+        <span className="noData">Fetching....</span>
+      )}
     </div>
   );
 };

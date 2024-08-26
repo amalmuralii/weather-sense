@@ -1,0 +1,38 @@
+.cardsContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    /* Ensure there's space between the cards */
+    padding: 20px;
+}
+
+.card {
+    flex: 1;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.card.hovered {
+    transform: scale(1.05);
+    /* Slightly enlarge the hovered card */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    /* Bring the hovered card to the front */
+}
+
+.card.dimmed {
+    opacity: 0.5;
+    /* Dim the background cards */
+    transform: scale(0.95);
+    /* Slightly shrink the background cards */
+}
+
+.card:hover .searchIcon {
+    color: #3498db;
+    /* Example of changing a specific element within the card */
+}
