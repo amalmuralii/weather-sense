@@ -8,7 +8,10 @@ import {
   getAllLocationData,
 } from "../../features/weather/weatherSlice";
 
+import { useAuth } from "../../contexts/AuthContexts";
+
 const SearchBar = ({ handleLocationChange }) => {
+  const { isAuthenticated } = useAuth();
   const dispatch = useDispatch();
   const locationsData = useSelector(getAllLocationData);
   const searchRef = useRef(null);
@@ -48,8 +51,12 @@ const SearchBar = ({ handleLocationChange }) => {
   };
   return (
     <div className="searchContainer">
-      <div className="searchBar" ref={searchRef}>
+      <div
+        className={`searchBar ${isAuthenticated ? "" : "disabled"}`}
+        ref={searchRef}
+      >
         <input
+          id="search"
           type="text"
           placeholder="Search.."
           onChange={handleInputChange}

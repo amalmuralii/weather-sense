@@ -2,7 +2,7 @@ import "./App.css";
 import AppLogo from "./components/AppLogo/AppLogo";
 import SearchBar from "./components/SearchBar/SearchBar";
 import Dashboard from "./pages/Dasboard/Dashboard";
-import Login from "./pages/LoginPage/Login";
+import Main from "./pages/LoginPage/Main";
 import { useEffect, useState } from "react";
 import useGeolocation from "./hooks/GeoLocationHook";
 import { Route, Routes } from "react-router-dom";
@@ -48,7 +48,7 @@ function App() {
       </header>
       <main className={`App-header ${backgroundClass}`}>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/*" element={<Main />} />
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>

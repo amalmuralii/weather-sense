@@ -4,25 +4,25 @@
     right: 0;
     display: flex;
     flex-direction: column;
-        align-items: center;
+    align-items: center;
         justify-content: flex-start;
-            width: 300px;
+        width: 300px;
         height: 300px;
-            border-radius: 30px;
+        border-radius: 30px;
             background-color: transparent;
             margin-top: 20px;
             margin-right: 20px;
         gap: 10px;
-        }
-        
-        .searchBar {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            width: 300px;
-            height: 35px;
-            border-radius: 30px;
-            background-color: transparent;
+}
+
+.searchBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 300px;
+    height: 35px;
+    border-radius: 30px;
+    background-color: transparent;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
         rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
         rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
@@ -37,12 +37,13 @@
     outline: none;
     background: transparent;
     caret-color: white;
-        color: white;
+    color: white;
 }
 
 .searchIcon {
     cursor: pointer;
 }
+
 .locationList {
     top: 35px;
     width: 300px;
@@ -94,4 +95,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
     /* background-color: #555; */
+}
+.disabled {
+    input {
+        cursor: not-allowed;
+    }
 }

@@ -3,7 +3,7 @@
 }
 
 .defaultBg {
-  --background-image: linear-gradient(to right top, #000000, #0c0b0b, #141314, #1b191a, #211f21, #272427, #2d2a2d, #332f34, #39353c, #3f3c44, #45434c, #4b4a54);
+--background-image: linear-gradient(to left top, #fefedf, #eae2b3, #d9c588, #cba75f, #bd8939, #ab8229, #987c17, #847500, #668025, #478747, #258b67, #008d83);
 }
 
 .freezing {
@@ -42,7 +42,7 @@
 
 .App-header {
   background-image: var(--background-image);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
